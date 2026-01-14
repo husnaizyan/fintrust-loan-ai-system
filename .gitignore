@@ -1,0 +1,66 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+venv/
+env/
+ENV/
+.venv
+.Python
+
+# Environment Variables 
+.env
+.env.local
+.env.production
+*.env
+
+# Backend Uploads & Test PDFs
+backend/uploads/
+uploads/
+*.pdf
+
+# Generated Files (from your loan_pdfs folder)
+malaysian_pdfs/
+loan_pdfs/*.pdf
+
+# Signature Images (from your signatures folder)
+signatures/
+*.png
+
+# IDE Settings
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS Files
+.DS_Store
+Thumbs.db
+._*
+
+# Python Build Files
+*.egg-info/
+dist/
+build/
+
+# Frontend (Already handled by Lovable's .gitignore in frontend/)
+# But adding here for safety
+node_modules/
+.vite/
+.cache/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test Files (if you have any)
+test/
+*.test.py
+
+# Jupyter Notebook Checkpoints (if you use notebooks)
+.ipynb_checkpoints/
+
+# Excel temp files
+~$*.xlsx
