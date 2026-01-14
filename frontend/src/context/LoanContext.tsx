@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 interface LoanContextType {
   applications: LoanApplication[];
   addApplication: (app: LoanApplication) => void;
+  deleteApplication: (id: string) => Promise<boolean>;
   currentResult: UploadResponse | null;
   setCurrentResult: (result: UploadResponse | null) => void;
   chatMessages: ChatMessage[];
@@ -41,6 +42,7 @@ export function LoanProvider({ children }: { children: ReactNode }) {
       // Map database fields to LoanApplication type
       const mappedApps: LoanApplication[] = (data || []).map(app => ({
         id: app.id,
+        application_id: app.application_id || undefined,
         applicant_name: app.applicant_name,
         loan_amount: Number(app.loan_amount),
         monthly_income: Number(app.monthly_income),
@@ -93,6 +95,7 @@ export function LoanProvider({ children }: { children: ReactNode }) {
       // Use the returned data with database-generated ID
       const savedApp: LoanApplication = {
         id: data.id,
+        application_id: data.application_id || undefined,
         applicant_name: data.applicant_name,
         loan_amount: Number(data.loan_amount),
         monthly_income: Number(data.monthly_income),
@@ -117,6 +120,29 @@ export function LoanProvider({ children }: { children: ReactNode }) {
     await fetchApplications();
   };
 
+  const deleteApplication = async (id: string): Promise<boolean> => {
+    try {
+      const { error } = await supabase
+        .from('loan_applications')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error deleting application:', error);
+        toast.error('Failed to delete application');
+        return false;
+      }
+
+      setApplications(prev => prev.filter(app => app.id !== id));
+      toast.success('Application deleted');
+      return true;
+    } catch (error) {
+      console.error('Error deleting application:', error);
+      toast.error('Failed to delete application');
+      return false;
+    }
+  };
+
   const addChatMessage = (message: ChatMessage) => {
     setChatMessages(prev => [...prev, message]);
   };
@@ -130,6 +156,7 @@ export function LoanProvider({ children }: { children: ReactNode }) {
       value={{
         applications,
         addApplication,
+        deleteApplication,
         currentResult,
         setCurrentResult,
         chatMessages,

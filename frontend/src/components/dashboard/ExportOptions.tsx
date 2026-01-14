@@ -11,9 +11,9 @@ interface ExportOptionsProps {
 
 export function ExportOptions({ applications = [] }: ExportOptionsProps) {
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('ms-MY', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'MYR',
       minimumFractionDigits: 0,
     }).format(amount);
   };

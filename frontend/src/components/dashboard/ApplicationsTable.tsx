@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Eye, ChevronUp, ChevronDown, Search, Filter } from 'lucide-react';
+import { Eye, ChevronUp, ChevronDown, Search, Filter, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { LoanApplication } from '@/types/loan';
 import { cn } from '@/lib/utils';
+import { useLoan } from '@/context/LoanContext';
 
 interface ApplicationsTableProps {
   applications: LoanApplication[];
@@ -14,10 +15,20 @@ type SortField = 'created_at' | 'monthly_income' | 'loan_amount' | 'status';
 type SortDirection = 'asc' | 'desc';
 
 export function ApplicationsTable({ applications, onViewDetails }: ApplicationsTableProps) {
+  const { deleteApplication } = useLoan();
   const [sortField, setSortField] = useState<SortField>('created_at');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const handleDelete = async (id: string) => {
+    if (window.confirm('Are you sure you want to delete this application?')) {
+      setDeletingId(id);
+      await deleteApplication(id);
+      setDeletingId(null);
+    }
+  };
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -210,15 +221,26 @@ export function ApplicationsTable({ applications, onViewDetails }: ApplicationsT
                     </Badge>
                   </td>
                   <td className="p-4 text-center">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => onViewDetails(app)}
-                      className="text-primary hover:text-primary"
-                    >
-                      <Eye className="h-4 w-4 mr-1" />
-                      View
-                    </Button>
+                    <div className="flex items-center justify-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onViewDetails(app)}
+                        className="text-primary hover:text-primary"
+                      >
+                        <Eye className="h-4 w-4 mr-1" />
+                        View
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDelete(app.id)}
+                        disabled={deletingId === app.id}
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))
